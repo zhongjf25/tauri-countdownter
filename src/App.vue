@@ -1,13 +1,18 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { ElMessageBox } from "element-plus";
-
+import { ElMessageBox, ElButton } from "element-plus";
+import "element-plus/dist/index.css";
 
 const inputMinutes = ref(1);
 const inputSeconds = ref(0);
 const timeLeft = ref(inputSeconds.value + inputMinutes.value * 60);
 const running = ref(false);
+const AudioPath = ref("Ki-ringtrain.mp3");
 let timer = null;
+
+//设置番茄工作状态
+const isPomodoro = ref(false);
+const isResting = ref(false);
 
 
 const displayTime = computed(() => {
@@ -17,12 +22,12 @@ const displayTime = computed(() => {
 });
 
 // 音频对象（可替换为你自己的音频文件路径）
-const audio = new Audio("Ki-ringtrain.mp3");
+const audio = new Audio(AudioPath.value);
 
 const start = () => {
   if (running.value) return;
   running.value = true;
-  if (timeLeft.value <= 0) timeLeft.value = inputSeconds.value+inputMinutes.value*60;
+  if (timeLeft.value <= 0) timeLeft.value = inputSeconds.value + inputMinutes.value * 60;
   timer = setInterval(() => {
     if (timeLeft.value > 0) {
       timeLeft.value--;
@@ -41,6 +46,8 @@ const pause = () => {
 const reset = () => {
   pause();
   timeLeft.value = inputSeconds.value+inputMinutes.value*60;
+  isPomodoro.value = false;
+  isResting.value = false;
 };
 
 watch([inputMinutes, inputSeconds], ([min, sec]) => {
@@ -52,13 +59,54 @@ const TimeOn = () => {
   clearInterval(timer);
   timer = null;
   audio.play();
-  ElMessageBox.alert("时间到","提示", {
-    confirmButtonText: "确定",
-    callback: () => {
-      audio.pause();
-      audio.currentTime = 0;
-    }
-  });
+  if(!isPomodoro.value) {
+    ElMessageBox.alert("时间到","提示", {
+      confirmButtonText: "确定",
+      callback: () => {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+  }
+  else if(!isResting.value) {
+    isResting.value = true;
+    ElMessageBox.alert("番茄工作时间到","提示", {
+      confirmButtonText: "开始休息",
+      callback: () => {
+        audio.pause();
+        audio.currentTime = 0;
+        isResting.value = true;
+        Pomodoro();
+      }
+    });
+  }
+  else {
+    isResting.value = false;
+    ElMessageBox.alert("休息时间到", "提示", {
+      confirmButtonText: "开始工作",
+      callback: () => {
+        audio.pause();
+        audio.currentTime = 0;
+        isResting.value = false;
+        Pomodoro();
+      }
+    })
+  }
+}
+
+const Pomodoro = () => {
+  isPomodoro.value = true;
+  if(!isResting.value) {
+    timeLeft.value = 25*60; // 设置为25分钟
+  }
+  else {
+    timeLeft.value = 5*60; // 设置为5分钟休息时间
+  }
+  running.value = false;
+  if (timer) clearInterval(timer);
+  timer = null;
+  start();
+  
 }
 
 </script>
@@ -95,6 +143,10 @@ const TimeOn = () => {
       剩余时间：<span style="font-size:2em;">{{ displayTime }}</span>
     </div>
   </main>
+
+  <div style="margin-top: 2em; text-align: center;">
+    <el-button @click="Pomodoro" type="danger" round >开始番茄工作！</el-button>
+  </div>
 </template>
 
 <style scoped>
