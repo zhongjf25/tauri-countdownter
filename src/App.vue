@@ -9,6 +9,8 @@ import {
   ElDropdownItem,
 } from "element-plus";
 import { Window } from "@tauri-apps/api/window";
+import { open } from "@tauri-apps/plugin-dialog";
+import { convertFileSrc } from '@tauri-apps/api/core';
 import "element-plus/dist/index.css";
 import {
   Minus,
@@ -43,6 +45,75 @@ const displayTime = computed(() => {
 
 // 音频对象（可替换为你自己的音频文件路径）
 const audio = new Audio(AudioPath.value);
+
+const changeDefaultWorkTime = async () => {
+  try {
+    const { value } = await ElMessageBox.prompt(
+      "请输入工作时间（分钟）",
+      "设置工作时间",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputValue: Math.floor(workTime.value / 60),
+        inputType: "number",
+        inputValidator: (value) => {
+          const num = parseInt(value);
+          if (isNaN(num) || num <= 0 || num > 180) {
+            return "请输入1-180之间的数字";
+          }
+          return true;
+        },
+      }
+    );
+    workTime.value = parseInt(value) * 60;
+  } catch (error) {
+    // 用户取消操作
+  }
+};
+
+const changeDefaultRestTime = async () => {
+  try {
+    const { value } = await ElMessageBox.prompt(
+      "请输入休息时间（分钟）",
+      "设置休息时间",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputValue: Math.floor(restTime.value / 60),
+        inputType: "number",
+        inputValidator: (value) => {
+          const num = parseInt(value);
+          if (isNaN(num) || num <= 0 || num > 60) {
+            return "请输入1-60之间的数字";
+          }
+          return true;
+        },
+      }
+    );
+    restTime.value = parseInt(value) * 60;
+  } catch (error) {
+    // 用户取消操作
+  }
+};
+
+const changeDefaultAudioPath = async () => {
+  // open file dialog to select audio file
+  const selected = await open({
+    multiple: false,
+    filters: [
+      {
+        name: "音频文件",
+        extensions: ["mp3", "wav", "ogg", "m4a", "aac"],
+      },
+    ],
+  });
+  // change the audio path
+  if (selected) {
+    AudioPath.value = convertFileSrc(selected);
+    audio.src = AudioPath.value;
+    // audio.load();
+  }
+};
 
 const start = () => {
   if (running.value) return;
@@ -167,20 +238,26 @@ const closeWindow = async () => {
           </button>
           <template #dropdown>
             <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem>工作时间</ElDropdownItem>
-              <ElDropdownItem>休息时间</ElDropdownItem>
-              <ElDropdownItem>闹铃</ElDropdownItem>
+              <ElDropdownItem @click="changeDefaultWorkTime"
+                >工作时间</ElDropdownItem
+              >
+              <ElDropdownItem @click="changeDefaultRestTime"
+                >休息时间</ElDropdownItem
+              >
+              <ElDropdownItem @click="changeDefaultAudioPath"
+                >闹铃</ElDropdownItem
+              >
             </ElDropdownMenu>
           </template>
         </ElDropdown>
         <button class="icon-btn" @click="minimizeWindow" title="最小化">
-          <el-icon :size="16"><Minus /></el-icon>
+          <el-icon :size="20"><Minus /></el-icon>
         </button>
         <button class="icon-btn" @click="maximizeWindow" title="最大化">
-          <el-icon :size="16"><FullScreen /></el-icon>
+          <el-icon :size="20"><FullScreen /></el-icon>
         </button>
         <button class="icon-btn close-btn" @click="closeWindow" title="关闭">
-          <el-icon :size="16"><Close /></el-icon>
+          <el-icon :size="20"><Close /></el-icon>
         </button>
       </div>
     </div>
