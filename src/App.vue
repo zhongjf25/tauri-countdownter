@@ -1,6 +1,13 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { ElMessageBox, ElButton, ElInputNumber, ElDropdown, ElDropdownMenu, ElDropdownItem } from "element-plus";
+import {
+  ElMessageBox,
+  ElButton,
+  ElInputNumber,
+  ElDropdown,
+  ElDropdownMenu,
+  ElDropdownItem,
+} from "element-plus";
 import { Window } from "@tauri-apps/api/window";
 import "element-plus/dist/index.css";
 import {
@@ -24,8 +31,8 @@ let timer = null;
 //设置番茄工作状态
 const isPomodoro = ref(false);
 const isResting = ref(false);
-const workTime = ref(25 * 60); 
-const restTime = ref(5 * 60)
+const workTime = ref(25 * 60);
+const restTime = ref(5 * 60);
 const appWindow = Window.getCurrent();
 
 const displayTime = computed(() => {
@@ -111,7 +118,7 @@ const Pomodoro = () => {
   if (!isResting.value) {
     timeLeft.value = workTime.value;
   } else {
-    timeLeft.value = restTime.value
+    timeLeft.value = restTime.value;
   }
   running.value = false;
   if (timer) clearInterval(timer);
@@ -128,7 +135,7 @@ const switchPomodoro = () => {
     isResting.value = true;
     Pomodoro();
   }
-}
+};
 
 const minimizeWindow = async () => {
   await appWindow?.minimize();
@@ -154,6 +161,18 @@ const closeWindow = async () => {
         <h3 class="app-title">番茄计时器</h3>
       </div>
       <div class="window-controls">
+        <ElDropdown trigger="click">
+          <button class="icon-btn">
+            <el-icon :size="20"><Setting /></el-icon>
+          </button>
+          <template #dropdown>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem>工作时间</ElDropdownItem>
+              <ElDropdownItem>休息时间</ElDropdownItem>
+              <ElDropdownItem>闹铃</ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
         <button class="icon-btn" @click="minimizeWindow" title="最小化">
           <el-icon :size="16"><Minus /></el-icon>
         </button>
@@ -164,20 +183,6 @@ const closeWindow = async () => {
           <el-icon :size="16"><Close /></el-icon>
         </button>
       </div>
-    </div>
-    <div class="tool-bar">
-      <ElDropdown trigger="click" class="icon-btn">
-        <button>
-          <el-icon :size="20"><Setting /></el-icon>
-        </button>
-        <template #dropdown>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem>工作时间</ElDropdownItem>
-            <ElDropdownItem>休息时间</ElDropdownItem>
-            <ElDropdownItem>闹铃</ElDropdownItem>
-          </ElDropdownMenu>
-        </template>
-      </ElDropdown>
     </div>
     <div class="main-content">
       <h2>设置时间</h2>
@@ -231,7 +236,12 @@ const closeWindow = async () => {
         <el-button @click="Pomodoro" :disabled="running" type="success" round
           >开始番茄工作！</el-button
         >
-        <el-button @click="switchPomodoro" :disabled="!isPomodoro" :type="isResting? 'success': 'info'" round>
+        <el-button
+          @click="switchPomodoro"
+          :disabled="!isPomodoro"
+          :type="isResting ? 'success' : 'info'"
+          round
+        >
           {{ isResting ? "直接工作" : "直接休息" }}
         </el-button>
       </div>
