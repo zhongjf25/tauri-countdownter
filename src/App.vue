@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { ElMessageBox, ElButton } from "element-plus";
+import { ElMessageBox, ElButton, ElInputNumber } from "element-plus";
 import "element-plus/dist/index.css";
 
 const inputMinutes = ref(1);
@@ -113,39 +113,40 @@ const Pomodoro = () => {
 
 <template>
   <main class="container">
-    <h1>倒计时器</h1>
+    <h2>设置时间</h2>
     <div class="row" style="margin-bottom: 1em;">
-      <input
-        type="number"
-        min="0"
-        max="3600"
+      <ElInputNumber
         v-model="inputMinutes"
-        :disabled="running"
+        controls-position="right"
+        :min="0"
+        :max="3600"
+        :disabled="running || isPomodoro"
         style="width: 100px; margin-right: 10px;"
       />
       <span>分</span>
-      <input
-        type="number"
-        min="0"
-        max="59"
+      <ElInputNumber
         v-model="inputSeconds"
-        :disabled="running"
+        controls-position="right"
+        :min="0"
+        :max="59"
+        :disabled="running || isPomodoro"
         style="width: 100px; margin-right: 10px;"
       />
       <span>秒</span>
     </div>
     <div class="row" style="margin-bottom: 1em;">
-      <button @click="start" :disabled="running">开始</button>
-      <button @click="pause" :disabled="!running" style="margin-left: 10px;">暂停</button>
-      <button @click="reset" style="margin-left: 10px;">重置</button>
+      <ElButton @click="start" type="primary" round :disabled="running">开始</ElButton>
+      <ElButton @click="pause" type="warning" round :disabled="!running" style="margin-left: 10px;">暂停</ElButton>
+      <ElButton @click="reset" type="danger" round style="margin-left: 10px">重置</ElButton>
     </div>
     <div class="countdown">
-      剩余时间：<span style="font-size:2em;">{{ displayTime }}</span>
+      {{ isPomodoro? isResting? "剩余休息时间：":"剩余工作时间：" : "剩余时间：" }}
+      <span style="font-size:2em;">{{ displayTime }}</span>
     </div>
   </main>
 
   <div style="margin-top: 2em; text-align: center;">
-    <el-button @click="Pomodoro" type="danger" round >开始番茄工作！</el-button>
+    <el-button @click="Pomodoro" :disabled="running" type="success" round >开始番茄工作！</el-button>
   </div>
 </template>
 
