@@ -42,7 +42,7 @@ const pomodoroCount = ref(0); // 已完成的番茄周期数
 const isAutoCycling = ref(false); // 是否开启自动循环
 
 // 从localStorage加载设置
-const loadSettings = () => {
+const loadSettings = async () => {
   try {
     const savedWorkTime = localStorage.getItem("pomodoroWorkTime");
     const savedRestTime = localStorage.getItem("pomodoroRestTime");
@@ -60,7 +60,7 @@ const loadSettings = () => {
       restTime.value = parseInt(savedRestTime);
     }
     if (savedAudioPath) {
-      AudioPath.value = savedAudioPath;
+      await setAudioPath(savedAudioPath);
     }
   } catch (error) {
     console.error("加载设置失败:", error);
@@ -216,23 +216,42 @@ const changeDefaultRestTime = async () => {
   }
 };
 
+// 检查音频文件是否存在
+async function checkAudioExists(path) {
+  try {
+    // fetch 只请求 HEAD，避免下载整个文件
+    const response = await fetch(path, { method: "HEAD" });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// 在设置音频路径或加载设置时调用
+async function setAudioPath(path) {
+  const exists = await checkAudioExists(path);
+  if (exists) {
+    AudioPath.value = path;
+    audio.src = path;
+  } else {
+    ElMessage.error("音频文件不存在或不可用，已恢复为默认音频");
+    AudioPath.value = "Ki-ringtrain.mp3";
+    audio.src = AudioPath.value;
+    saveSettings();
+  }
+}
+
 const changeDefaultAudioPath = async () => {
-  // open file dialog to select audio file
   const selected = await open({
     multiple: false,
     filters: [
-      {
-        name: "音频文件",
-        extensions: ["mp3", "wav", "ogg", "m4a", "aac"],
-      },
+      { name: "音频文件", extensions: ["mp3", "wav", "ogg", "m4a", "aac"] },
     ],
   });
-  // change the audio path
   if (selected) {
-    AudioPath.value = convertFileSrc(selected);
-    audio.src = AudioPath.value;
-    // audio.load();
-    saveSettings(); // 保存设置
+    const path = convertFileSrc(selected);
+    await setAudioPath(path);
+    saveSettings();
   }
 };
 
