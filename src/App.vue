@@ -1,5 +1,16 @@
 <script setup>
 import "element-plus/dist/index.css";
+import { onMounted, onUnmounted } from "vue";
+
+onMounted(() => {
+  // 禁用右键菜单
+  const handler = (e) => e.preventDefault();
+  window.addEventListener("contextmenu", handler);
+  // 组件卸载时移除监听
+  onUnmounted(() => {
+    window.removeEventListener("contextmenu", handler);
+  });
+});
 </script>
 
 <template>
