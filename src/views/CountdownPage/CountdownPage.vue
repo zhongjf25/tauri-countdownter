@@ -249,6 +249,9 @@ const timeUp = () => {
         };
       }
       sendNotification(notificationOptions);
+      appWindow?.show();
+      appWindow?.setFocus();
+      appWindow?.unminimize();
     } catch (error) {
       console.error("发送通知失败:", error);
     }
