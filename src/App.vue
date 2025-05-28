@@ -9,6 +9,7 @@ import {
   ElSwitch,
   ElDropdownMenu,
   ElDropdownItem,
+  ElDivider,
 } from "element-plus";
 import { Window } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -22,6 +23,7 @@ import {
   onAction,
 } from "@tauri-apps/plugin-notification";
 import { listen } from "@tauri-apps/api/event";
+import { Store, load } from "@tauri-apps/plugin-store";
 import "element-plus/dist/index.css";
 import {
   Minus,
@@ -52,6 +54,20 @@ const restTime = ref(5 * 60);
 const appWindow = Window.getCurrent();
 // 音频对象（可替换为你自己的音频文件路径）
 const audio = new Audio(AudioPath.value);
+
+const store = new Store("settings.bin");  // 使用 Tauri Store 存储设置
+
+onMounted(async () => {
+  checkAutoStartStatus();
+  checkNotificationPermission();
+  // 从存储中加载设置
+  const cachedAudioPath = await store.get("audioPath");
+  if(cachedAudioPath) {
+    AudioPath.value = cachedAudioPath;
+    audio.src = convertFileSrc(AudioPath.value);
+  }
+});
+
 
 const displayTime = computed(() => {
   const min = Math.floor(timeLeft.value / 60);
@@ -168,9 +184,12 @@ const changeDefaultAudioPath = async () => {
   });
   // change the audio path
   if (selected) {
-    AudioPath.value = convertFileSrc(selected);
+    const path = convertFileSrc(selected);
+    AudioPath.value = path;
     audio.src = AudioPath.value;
-    // audio.load();
+    // 保存到存储中
+    await store.set("audioPath", path);
+    await store.save();
   }
 };
 
@@ -336,8 +355,9 @@ const closeWindow = async () => {
                 >休息时间</ElDropdownItem
               >
               <ElDropdownItem @click="changeDefaultAudioPath"
-                >闹铃</ElDropdownItem
+                >闹铃选择</ElDropdownItem
               >
+              <ElDivider style="margin:4px 0" border-style='solid' />
               <ElDropdownItem>
                 <div class="autostart-item">
                   <span>开机自启动</span>
