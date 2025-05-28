@@ -79,7 +79,7 @@
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  padding: 50px 40px;
+  padding: 20px 40px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
@@ -185,6 +185,76 @@
   }
 }
 
+/* 番茄统计和循环状态样式 */
+.pomodoro-stats {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.pomodoro-count {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 10px 20px;
+  border-radius: 25px;
+  display: inline-block;
+  margin: 10px 0;
+  border: 2px solid rgba(255, 107, 107, 0.2);
+  animation: pulse 2s infinite;
+}
+
+.cycle-info {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.cycle-status {
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #4fd1c7;
+  background: rgba(79, 209, 199, 0.1);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-block;
+  border: 2px solid rgba(79, 209, 199, 0.2);
+}
+
+.stop-cycle-btn {
+  background: rgba(229, 62, 62, 0.8) !important;
+  border: 1px solid rgba(229, 62, 62, 0.3) !important;
+  padding: 15px 30px !important;
+  font-size: 1.1em !important;
+  font-weight: 500 !important;
+  border-radius: 16px !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(229, 62, 62, 0.2) !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(20px) !important;
+  margin-left: 10px;
+}
+
+.stop-cycle-btn:hover {
+  background: rgba(229, 62, 62, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3) !important;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 107, 107, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+  }
+}
+
 /* 响应式设计 */
 @media (max-width: 600px) {
   .time-up-title {
@@ -203,5 +273,28 @@
   .stop-music-btn,
   .continue-btn {
     width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pomodoro-count {
+    font-size: 1.1em;
+    padding: 8px 16px;
+  }
+
+  .cycle-status {
+    font-size: 1em;
+    padding: 6px 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .stop-cycle-btn {
+    margin-left: 0;
+    margin-top: 10px;
   }
 }

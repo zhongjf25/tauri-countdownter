@@ -26,9 +26,13 @@
         </div>
 
         <h1 class="time-up-title">{{ getTimeUpMessage() }}</h1>
-
         <div class="message-content">
           <p class="time-up-message">{{ getDetailMessage() }}</p>
+          <div v-if="isPomodoro && !isResting" class="pomodoro-stats">
+            <p class="pomodoro-count">
+              🍅 已完成 {{ pomodoroCount + 1 }} 个番茄
+            </p>
+          </div>
         </div>
 
         <div class="action-buttons">
@@ -37,11 +41,11 @@
             size="large"
             @click="stopMusicAndReturn"
             class="stop-music-btn"
+            v-if="!isPomodoro || !autoCycling"
           >
             <el-icon><VideoPause /></el-icon>
             停止音乐
           </el-button>
-
           <el-button
             type="success"
             size="large"
@@ -50,7 +54,18 @@
             v-if="isPomodoro"
           >
             <el-icon><VideoPlay /></el-icon>
-            {{ isResting ? "开始工作" : "开始休息" }}
+            {{ autoCycling ? "继续循环" : isResting ? "开始工作" : "开始休息" }}
+          </el-button>
+
+          <el-button
+            type="info"
+            size="large"
+            @click="stopCycleAndReturn"
+            class="stop-cycle-btn"
+            v-if="isPomodoro && autoCycling"
+          >
+            <el-icon><Close /></el-icon>
+            停止循环
           </el-button>
         </div>
       </div>
@@ -80,6 +95,8 @@ const appWindow = Window.getCurrent();
 const isPomodoro = route.query.isPomodoro === "true";
 const isResting = route.query.isResting === "true";
 const audioPath = route.query.audioPath || "Ki-ringtrain.mp3";
+const autoCycling = route.query.autoCycling === "true";
+const pomodoroCount = parseInt(route.query.pomodoroCount) || 0;
 
 // 创建音频对象
 let audio = null;
@@ -141,6 +158,7 @@ const continueNext = () => {
 
   // 根据当前状态决定下一步
   const nextIsResting = !isResting;
+  const wasWorking = !isResting; // 记录当前周期是否是工作时间
 
   // 返回主页面并传递状态，让主页面自动开始下一个周期
   router.push({
@@ -149,8 +167,23 @@ const continueNext = () => {
       autoStart: "true",
       isPomodoro: "true",
       isResting: nextIsResting.toString(),
+      autoCycling: autoCycling.toString(),
+      pomodoroCount: pomodoroCount.toString(),
+      fromTimeUp: "true",
+      wasWorking: wasWorking.toString(),
     },
   });
+};
+
+const stopCycleAndReturn = () => {
+  // 停止音乐
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+
+  // 返回主页面并停止循环
+  router.push("/");
 };
 
 const minimizeWindow = async () => {
