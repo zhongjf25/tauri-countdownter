@@ -1,0 +1,391 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #2c3e50;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+}
+
+.app-title {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.2em;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.title-bar {
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-app-region: drag;
+  position: relative;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.autostart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  width: 100%;
+  min-width: 150px;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 15px;
+  gap: 15px;
+  overflow: hidden;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  -webkit-app-region: no-drag;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0 5px;
+  color: #5a67d8;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.icon-btn:hover {
+  color: #4c51bf;
+  background: rgba(90, 103, 216, 0.1);
+}
+
+.close-btn:hover {
+  color: #e53e3e;
+  background: rgba(229, 62, 62, 0.1);
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 设置时间标题样式 */
+h2 {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.8s ease-out;
+  color: #2d3748;
+}
+
+/* 输入区域样式 */
+.row {
+  animation: fadeInUp 1s ease-out 0.2s both;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Element Plus 按钮覆盖样式 */
+.el-button--primary {
+  background: rgba(90, 103, 216, 0.8) !important;
+  border: 1px solid rgba(90, 103, 216, 0.3) !important;
+  padding: 15px 30px !important;
+  font-size: 1.1em !important;
+  font-weight: 500 !important;
+  border-radius: 16px !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(90, 103, 216, 0.2) !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.el-button--primary:hover {
+  background: rgba(90, 103, 216, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(90, 103, 216, 0.3) !important;
+}
+
+.el-button--warning {
+  background: rgba(237, 137, 54, 0.8) !important;
+  border: 1px solid rgba(237, 137, 54, 0.3) !important;
+  padding: 15px 30px !important;
+  font-size: 1.1em !important;
+  font-weight: 500 !important;
+  border-radius: 16px !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(237, 137, 54, 0.2) !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.el-button--warning:hover {
+  background: rgba(237, 137, 54, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(237, 137, 54, 0.3) !important;
+}
+
+.el-button--danger {
+  background: rgba(229, 62, 62, 0.8) !important;
+  border: 1px solid rgba(229, 62, 62, 0.3) !important;
+  padding: 15px 30px !important;
+  font-size: 1.1em !important;
+  font-weight: 500 !important;
+  border-radius: 16px !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(229, 62, 62, 0.2) !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.el-button--danger:hover {
+  background: rgba(229, 62, 62, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3) !important;
+}
+
+.el-button--success {
+  background: rgba(72, 187, 120, 0.8) !important;
+  border: 1px solid rgba(72, 187, 120, 0.3) !important;
+  padding: 15px 30px !important;
+  font-size: 1.1em !important;
+  font-weight: 500 !important;
+  border-radius: 16px !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(72, 187, 120, 0.2) !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.el-button--success:hover {
+  background: rgba(72, 187, 120, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3) !important;
+}
+
+.el-button--info {
+  background: rgba(113, 128, 150, 0.8) !important;
+  border: 1px solid rgba(113, 128, 150, 0.3) !important;
+  padding: 15px 30px !important;
+  font-size: 1.1em !important;
+  font-weight: 500 !important;
+  border-radius: 16px !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(113, 128, 150, 0.2) !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.el-button--info:hover {
+  background: rgba(113, 128, 150, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(113, 128, 150, 0.3) !important;
+}
+
+/* 简约时间选择器样式 */
+.time-section {
+  width: 100%;
+  max-width: 400px;
+  animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.time-display {
+  text-align: center;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.time-value {
+  font-size: 3.5em;
+  font-weight: 600;
+  font-family: "Segoe UI", monospace;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  line-height: 1;
+  color: #2d3748;
+}
+
+.time-controls {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.control-label {
+  font-size: 1em;
+  font-weight: 500;
+  color: #4a5568;
+  min-width: 30px;
+}
+
+.time-slider {
+  flex: 1;
+}
+
+/* Element Plus 滑块样式覆盖 */
+.time-slider .el-slider__runway {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+}
+
+.time-slider .el-slider__bar {
+  background: linear-gradient(45deg, #5a67d8, #667eea) !important;
+  border-radius: 3px !important;
+}
+
+.time-slider .el-slider__button {
+  width: 16px !important;
+  height: 16px !important;
+  border: 2px solid #fff !important;
+  box-shadow: 0 2px 8px rgba(90, 103, 216, 0.3) !important;
+  background: linear-gradient(45deg, #5a67d8, #667eea) !important;
+}
+
+.time-slider .el-slider__button:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 12px rgba(90, 103, 216, 0.4) !important;
+}
+
+.quick-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.quick-btn {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #2d3748;
+  padding: 10px 18px;
+  border-radius: 16px;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  min-width: 60px;
+}
+
+.quick-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.quick-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  h2 {
+    font-size: 1.8em;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .el-button {
+    width: 200px !important;
+    margin: 5px 0 !important;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .time-display {
+    padding: 20px 15px;
+    margin-bottom: 30px;
+  }
+
+  .time-value {
+    font-size: 3em;
+  }
+
+  .quick-buttons {
+    gap: 8px;
+  }
+
+  .quick-btn {
+    padding: 10px 16px;
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.5em;
+  }
+
+  .el-button {
+    width: 180px !important;
+    padding: 12px 20px !important;
+    font-size: 1em !important;
+  }
+
+  .time-display {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .time-value {
+    font-size: 2.5em;
+  }
+
+  .quick-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .quick-btn {
+    width: 120px;
+  }
+}
