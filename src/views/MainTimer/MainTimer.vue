@@ -11,7 +11,7 @@ import {
   ElDropdownItem,
 } from "element-plus";
 import { Window } from "@tauri-apps/api/window";
-import { open } from "@tauri-apps/plugin-dialog";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { enable, isEnabled, disable } from "@tauri-apps/plugin-autostart";
 import {
@@ -46,12 +46,21 @@ const loadSettings = () => {
   try {
     const savedWorkTime = localStorage.getItem("pomodoroWorkTime");
     const savedRestTime = localStorage.getItem("pomodoroRestTime");
+    const savedAudioPath = localStorage.getItem("pomodoroAudioPath");
+    console.log("加载设置:", {
+      savedWorkTime,
+      savedRestTime,
+      savedAudioPath,
+    });
 
     if (savedWorkTime) {
       workTime.value = parseInt(savedWorkTime);
     }
     if (savedRestTime) {
       restTime.value = parseInt(savedRestTime);
+    }
+    if (savedAudioPath) {
+      AudioPath.value = savedAudioPath;
     }
   } catch (error) {
     console.error("加载设置失败:", error);
@@ -63,6 +72,7 @@ const saveSettings = () => {
   try {
     localStorage.setItem("pomodoroWorkTime", workTime.value.toString());
     localStorage.setItem("pomodoroRestTime", restTime.value.toString());
+    localStorage.setItem("pomodoroAudioPath", AudioPath.value);
   } catch (error) {
     console.error("保存设置失败:", error);
   }
@@ -222,6 +232,7 @@ const changeDefaultAudioPath = async () => {
     AudioPath.value = convertFileSrc(selected);
     audio.src = AudioPath.value;
     // audio.load();
+    saveSettings(); // 保存设置
   }
 };
 
