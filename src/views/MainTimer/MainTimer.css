@@ -389,3 +389,44 @@ h2 {
     width: 120px;
   }
 }
+
+@media (max-width: 768px) {
+  .pomodoro-section {
+    padding: 15px;
+    margin: 10px 0;
+  }
+  .pomodoro-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .pomodoro-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pomodoro-btn {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pomodoro-header h4 {
+    font-size: 1.2em;
+  }
+
+  .pomodoro-count {
+    font-size: 0.8em;
+    padding: 4px 10px;
+  }
+
+  .status-text {
+    font-size: 1em;
+  }
+
+  .current-mode {
+    font-size: 0.85em;
+  }
+}

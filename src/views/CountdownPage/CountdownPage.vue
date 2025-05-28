@@ -91,19 +91,13 @@
           </el-button>
 
           <el-button
-            type="info"
+            v-if="isPomodoro"
+            type="success"
             size="large"
-            @click="backToMain"
+            @click="switchMode"
             class="control-btn"
           >
-            <el-icon><Back /></el-icon>
-            返回
-          </el-button>
-        </div>
-
-        <!-- 番茄工作切换按钮 -->
-        <div class="pomodoro-controls" v-if="isPomodoro">
-          <el-button type="success" @click="switchMode" class="switch-btn">
+            <el-icon><VideoPlay /></el-icon>
             {{ isResting ? "直接开始工作" : "直接开始休息" }}
           </el-button>
         </div>
@@ -139,6 +133,27 @@ const initialSeconds = ref(parseInt(route.query.seconds) || 0);
 const isPomodoro = ref(route.query.isPomodoro === "true");
 const isResting = ref(route.query.isResting === "true");
 const audioPath = ref(route.query.audioPath || "Ki-ringtrain.mp3");
+const autoCycling = ref(route.query.autoCycling === "true");
+const pomodoroCount = ref(parseInt(route.query.pomodoroCount) || 0);
+
+// 从localStorage加载番茄时间设置
+const loadPomodoroSettings = () => {
+  try {
+    const savedWorkTime = localStorage.getItem("pomodoroWorkTime");
+    const savedRestTime = localStorage.getItem("pomodoroRestTime");
+
+    return {
+      workTime: savedWorkTime ? parseInt(savedWorkTime) : 25 * 60,
+      restTime: savedRestTime ? parseInt(savedRestTime) : 5 * 60,
+    };
+  } catch (error) {
+    console.error("加载番茄设置失败:", error);
+    return {
+      workTime: 25 * 60,
+      restTime: 5 * 60,
+    };
+  }
+};
 
 // 计时器状态
 const timeLeft = ref(initialMinutes.value * 60 + initialSeconds.value);
@@ -256,7 +271,6 @@ const timeUp = () => {
       console.error("发送通知失败:", error);
     }
   }
-
   // 跳转到时间结束页面
   router.push({
     path: "/timeup",
@@ -264,6 +278,8 @@ const timeUp = () => {
       isPomodoro: isPomodoro.value.toString(),
       isResting: isResting.value.toString(),
       audioPath: audioPath.value,
+      autoCycling: autoCycling.value.toString(),
+      pomodoroCount: pomodoroCount.value.toString(),
     },
   });
 };
@@ -273,6 +289,10 @@ const switchMode = () => {
   pauseTimer();
   isResting.value = !isResting.value;
 
+  // 获取当前的番茄时间设置
+  const settings = loadPomodoroSettings();
+  const nextTime = isResting.value ? settings.restTime : settings.workTime;
+
   // 跳转回主页面并自动开始
   router.push({
     path: "/",
@@ -280,6 +300,8 @@ const switchMode = () => {
       autoStart: "true",
       isPomodoro: "true",
       isResting: isResting.value.toString(),
+      autoCycling: autoCycling.value.toString(),
+      pomodoroCount: pomodoroCount.value.toString(),
     },
   });
 };

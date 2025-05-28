@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
   ElMessageBox,
@@ -38,15 +38,38 @@ const isPomodoro = ref(false);
 const isResting = ref(false);
 const workTime = ref(25 * 60);
 const restTime = ref(5 * 60);
+const pomodoroCount = ref(0); // 已完成的番茄周期数
+const isAutoCycling = ref(false); // 是否开启自动循环
+
+// 从localStorage加载设置
+const loadSettings = () => {
+  try {
+    const savedWorkTime = localStorage.getItem("pomodoroWorkTime");
+    const savedRestTime = localStorage.getItem("pomodoroRestTime");
+
+    if (savedWorkTime) {
+      workTime.value = parseInt(savedWorkTime);
+    }
+    if (savedRestTime) {
+      restTime.value = parseInt(savedRestTime);
+    }
+  } catch (error) {
+    console.error("加载设置失败:", error);
+  }
+};
+
+// 保存设置到localStorage
+const saveSettings = () => {
+  try {
+    localStorage.setItem("pomodoroWorkTime", workTime.value.toString());
+    localStorage.setItem("pomodoroRestTime", restTime.value.toString());
+  } catch (error) {
+    console.error("保存设置失败:", error);
+  }
+};
 const appWindow = Window.getCurrent();
 // 音频对象（可替换为你自己的音频文件路径）
 const audio = new Audio(AudioPath.value);
-
-const displayTime = computed(() => {
-  const min = Math.floor(timeLeft.value / 60);
-  const sec = timeLeft.value % 60;
-  return `${min}:${sec.toString().padStart(2, "0")}`;
-});
 
 // 检查通知权限
 const checkNotificationPermission = async () => {
@@ -91,14 +114,36 @@ const toggleAutoStart = async () => {
 // 检查路由参数，处理自动开始
 const handleRouteParams = () => {
   if (route.query.autoStart === "true" && route.query.isPomodoro === "true") {
+    loadSettings();
+
     isPomodoro.value = true;
     isResting.value = route.query.isResting === "true";
+
+    // 恢复自动循环状态
+    if (route.query.autoCycling === "true") {
+      isAutoCycling.value = true;
+    }
+
+    // 恢复番茄计数
+    if (route.query.pomodoroCount) {
+      pomodoroCount.value = parseInt(route.query.pomodoroCount);
+    }
+
+    // 如果是从时间结束页面返回的自动循环
+    if (route.query.fromTimeUp === "true") {
+      // 如果刚完成了工作时间，增加番茄计数
+      if (route.query.wasWorking === "true") {
+        pomodoroCount.value++;
+      }
+    }
+
     Pomodoro();
   }
 };
 
 // 组件挂载时检查自启动状态
 onMounted(async () => {
+  loadSettings(); // 首先加载保存的设置
   checkAutoStartStatus();
   checkNotificationPermission();
   handleRouteParams();
@@ -129,6 +174,7 @@ const changeDefaultWorkTime = async () => {
       }
     );
     workTime.value = parseInt(value) * 60;
+    saveSettings(); // 保存设置
   } catch (error) {
     // 用户取消操作
   }
@@ -154,6 +200,7 @@ const changeDefaultRestTime = async () => {
       }
     );
     restTime.value = parseInt(value) * 60;
+    saveSettings(); // 保存设置
   } catch (error) {
     // 用户取消操作
   }
@@ -205,6 +252,8 @@ const reset = () => {
   timeLeft.value = inputSeconds.value + inputMinutes.value * 60;
   isPomodoro.value = false;
   isResting.value = false;
+  isAutoCycling.value = false;
+  pomodoroCount.value = 0;
 };
 
 watch([inputMinutes, inputSeconds], ([min, sec]) => {
@@ -216,6 +265,8 @@ const Pomodoro = () => {
 
   isPomodoro.value = true;
   let minutes, seconds;
+
+  loadSettings();
 
   if (!isResting.value) {
     // 工作时间
@@ -236,19 +287,25 @@ const Pomodoro = () => {
       isPomodoro: "true",
       isResting: isResting.value.toString(),
       audioPath: AudioPath.value,
+      autoCycling: isAutoCycling.value.toString(),
+      pomodoroCount: pomodoroCount.value.toString(),
     },
   });
 };
 
-const switchPomodoro = () => {
-  if (!isPomodoro.value) return;
-  if (isResting.value) {
-    isResting.value = false;
-    Pomodoro();
-  } else {
-    isResting.value = true;
-    Pomodoro();
-  }
+// 开始番茄工作循环
+const startPomodoroLoop = () => {
+  if (running.value) return;
+
+  // 确保使用最新的localStorage设置
+  loadSettings();
+
+  isAutoCycling.value = true;
+  isPomodoro.value = true;
+  isResting.value = false;
+  pomodoroCount.value = 0;
+
+  Pomodoro();
 };
 
 const minimizeWindow = async () => {
@@ -386,21 +443,35 @@ const setQuickTime = (minutes, seconds) => {
           </button>
         </div>
       </div>
+
       <div class="row" style="margin-bottom: 0.8em">
-        <ElButton @click="start" type="primary" round :disabled="running"
+        <ElButton
+          size="large"
+          @click="start"
+          type="primary"
+          round
+          :disabled="running"
           >开始</ElButton
         >
         <ElButton
-          @click="pause"
-          type="warning"
+          size="large"
+          @click="reset"
+          type="danger"
           round
-          :disabled="!running"
           style="margin-left: 10px"
-          >暂停</ElButton
-        >
-        <ElButton @click="reset" type="danger" round style="margin-left: 10px"
           >重置</ElButton
         >
+        <ElButton
+          size="large"
+          v-if="!isAutoCycling"
+          @click="startPomodoroLoop"
+          type="success"
+          round
+          :disabled="running"
+          class="icon-btn"
+        >
+          番茄循环
+        </ElButton>
       </div>
     </div>
   </div>
