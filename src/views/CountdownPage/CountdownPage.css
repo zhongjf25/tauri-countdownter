@@ -1,0 +1,285 @@
+/* CountdownPage.css */
+.countdown-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #2c3e50;
+}
+
+.title-bar {
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-app-region: drag;
+  position: relative;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+}
+
+.app-title {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.2em;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  -webkit-app-region: no-drag;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0 5px;
+  color: #5a67d8;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.icon-btn:hover {
+  color: #4c51bf;
+  background: rgba(90, 103, 216, 0.1);
+}
+
+.close-btn:hover {
+  color: #e53e3e;
+  background: rgba(229, 62, 62, 0.1);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.countdown-content {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.timer-display {
+  margin-bottom: 40px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.timer-circle {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
+  border-radius: 50%;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.progress-ring {
+  position: relative;
+}
+
+.progress-ring-svg {
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 20px rgba(90, 103, 216, 0.2));
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.3s ease;
+  stroke-linecap: round;
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.time-value {
+  font-size: 4em;
+  font-weight: 600;
+  font-family: "Segoe UI", monospace;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  line-height: 1;
+  margin-bottom: 10px;
+  color: #2d3748;
+}
+
+.time-label {
+  font-size: 1.1em;
+  opacity: 0.7;
+  font-weight: 400;
+  color: #4a5568;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.control-btn {
+  padding: 15px 25px !important;
+  font-size: 1.1em !important;
+  font-weight: 500 !important;
+  border-radius: 16px !important;
+  transition: all 0.3s ease !important;
+  min-width: 120px !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.pomodoro-controls {
+  animation: fadeInUp 1.2s ease-out 0.4s both;
+}
+
+.switch-btn {
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: #2d3748 !important;
+  padding: 12px 25px !important;
+  border-radius: 16px !important;
+  font-size: 1em !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.switch-btn:hover {
+  background: rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Element Plus 按钮样式覆盖 */
+.el-button--primary {
+  background: rgba(90, 103, 216, 0.8) !important;
+  border: 1px solid rgba(90, 103, 216, 0.3) !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(90, 103, 216, 0.2) !important;
+}
+
+.el-button--primary:hover {
+  background: rgba(90, 103, 216, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(90, 103, 216, 0.3) !important;
+}
+
+.el-button--warning {
+  background: rgba(237, 137, 54, 0.8) !important;
+  border: 1px solid rgba(237, 137, 54, 0.3) !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(237, 137, 54, 0.2) !important;
+}
+
+.el-button--warning:hover {
+  background: rgba(237, 137, 54, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(237, 137, 54, 0.3) !important;
+}
+
+.el-button--danger {
+  background: rgba(229, 62, 62, 0.8) !important;
+  border: 1px solid rgba(229, 62, 62, 0.3) !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(229, 62, 62, 0.2) !important;
+}
+
+.el-button--danger:hover {
+  background: rgba(229, 62, 62, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3) !important;
+}
+
+.el-button--info {
+  background: rgba(113, 128, 150, 0.8) !important;
+  border: 1px solid rgba(113, 128, 150, 0.3) !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(113, 128, 150, 0.2) !important;
+}
+
+.el-button--info:hover {
+  background: rgba(113, 128, 150, 0.9) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(113, 128, 150, 0.3) !important;
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .main-content {
+    padding: 20px;
+  }
+
+  .progress-ring-svg {
+    width: 250px;
+    height: 250px;
+  }
+
+  .time-value {
+    font-size: 3em;
+  }
+
+  .control-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .control-btn {
+    width: 200px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .progress-ring-svg {
+    width: 200px;
+    height: 200px;
+  }
+
+  .time-value {
+    font-size: 2.5em;
+  }
+
+  .control-btn {
+    width: 180px !important;
+    padding: 12px 20px !important;
+    font-size: 1em !important;
+  }
+}
