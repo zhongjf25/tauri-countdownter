@@ -236,6 +236,19 @@ const changeDefaultAudioPath = async () => {
   }
 };
 
+function getAudioFileName(path) {
+  try {
+    // 先解码URL，再用正则提取最后的文件名
+    const decoded = decodeURIComponent(path);
+    const match = decoded.match(/[/\\]([^/\\]+\.mp3|wav|ogg|m4a|aac)$/i);
+    if (match && match[1]) return match[1];
+    // 或直接取最后一个斜杠后的内容
+    return decoded.split(/[/\\]/).pop();
+  } catch {
+    return path;
+  }
+}
+
 const start = () => {
   if (running.value) return;
 
@@ -358,13 +371,13 @@ const setQuickTime = (minutes, seconds) => {
           <template #dropdown>
             <ElDropdownMenu slot="dropdown">
               <ElDropdownItem @click="changeDefaultWorkTime"
-                >工作时间</ElDropdownItem
+                >工作时间：{{ workTime/60 }} min</ElDropdownItem
               >
               <ElDropdownItem @click="changeDefaultRestTime"
-                >休息时间</ElDropdownItem
+                >休息时间：{{ restTime/60 }} min</ElDropdownItem
               >
               <ElDropdownItem @click="changeDefaultAudioPath"
-                >闹铃</ElDropdownItem
+                >闹铃： {{ getAudioFileName(AudioPath) }}</ElDropdownItem
               >
               <ElDropdownItem>
                 <div class="autostart-item">
