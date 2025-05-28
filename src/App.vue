@@ -1,16 +1,19 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import {
   ElMessageBox,
   ElButton,
   ElInputNumber,
   ElDropdown,
+  ElMessage,
+  ElSwitch,
   ElDropdownMenu,
   ElDropdownItem,
 } from "element-plus";
 import { Window } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
-import { convertFileSrc } from '@tauri-apps/api/core';
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { enable, isEnabled, disable } from "@tauri-apps/plugin-autostart";
 import "element-plus/dist/index.css";
 import {
   Minus,
@@ -28,6 +31,7 @@ const inputSeconds = ref(0);
 const timeLeft = ref(inputSeconds.value + inputMinutes.value * 60);
 const running = ref(false);
 const AudioPath = ref("Ki-ringtrain.mp3");
+const autoStartEnabled = ref(false);
 let timer = null;
 
 //设置番茄工作状态
@@ -45,6 +49,38 @@ const displayTime = computed(() => {
 
 // 音频对象（可替换为你自己的音频文件路径）
 const audio = new Audio(AudioPath.value);
+
+// 检查自启动状态
+const checkAutoStartStatus = async () => {
+  try {
+    autoStartEnabled.value = await isEnabled();
+  } catch (error) {
+    console.error("检查自启动状态失败:", error);
+  }
+};
+
+// 切换自启动状态
+const toggleAutoStart = async () => {
+  try {
+    if (autoStartEnabled.value) {
+      await enable();
+      ElMessage.success("已启用开机自启动");
+    } else {
+      await disable();
+      ElMessage.success("已禁用开机自启动");
+    }
+  } catch (error) {
+    ElMessage.error("设置自启动失败: " + error.message);
+    console.error("设置自启动失败:", error);
+    // 如果设置失败，恢复原状态
+    autoStartEnabled.value = !autoStartEnabled.value;
+  }
+};
+
+// 组件挂载时检查自启动状态
+onMounted(() => {
+  checkAutoStartStatus();
+});
 
 const changeDefaultWorkTime = async () => {
   try {
@@ -247,6 +283,18 @@ const closeWindow = async () => {
               <ElDropdownItem @click="changeDefaultAudioPath"
                 >闹铃</ElDropdownItem
               >
+              <ElDropdownItem>
+                <div class="autostart-item">
+                  <span>开机自启动</span>
+                  <ElSwitch
+                    v-model="autoStartEnabled"
+                    @change="toggleAutoStart"
+                    active-text="开"
+                    inactive-text="关"
+                    style="margin-left: 10px"
+                  />
+                </div>
+              </ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -374,6 +422,15 @@ const closeWindow = async () => {
   /* 可选：阴影和圆角 */
   /* box-shadow: 0 1px 4px rgba(0,0,0,0.03); */
   /* border-radius: 0 0 8px 8px; */
+}
+
+.autostart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  width: 100%;
+  min-width: 150px;
 }
 
 .main-content {
