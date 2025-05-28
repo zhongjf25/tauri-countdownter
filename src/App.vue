@@ -14,6 +14,14 @@ import { Window } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { enable, isEnabled, disable } from "@tauri-apps/plugin-autostart";
+import {
+  isPermissionGranted,
+  requestPermission,
+  sendNotification,
+  onNotificationReceived,
+  onAction,
+} from "@tauri-apps/plugin-notification";
+import { listen } from "@tauri-apps/api/event";
 import "element-plus/dist/index.css";
 import {
   Minus,
@@ -32,6 +40,8 @@ const timeLeft = ref(inputSeconds.value + inputMinutes.value * 60);
 const running = ref(false);
 const AudioPath = ref("Ki-ringtrain.mp3");
 const autoStartEnabled = ref(false);
+const notificationPermissionGranted = ref(false);
+const notificationIcon = ref("icon.png");
 let timer = null;
 
 //设置番茄工作状态
@@ -40,6 +50,8 @@ const isResting = ref(false);
 const workTime = ref(25 * 60);
 const restTime = ref(5 * 60);
 const appWindow = Window.getCurrent();
+// 音频对象（可替换为你自己的音频文件路径）
+const audio = new Audio(AudioPath.value);
 
 const displayTime = computed(() => {
   const min = Math.floor(timeLeft.value / 60);
@@ -47,8 +59,18 @@ const displayTime = computed(() => {
   return `${min}:${sec.toString().padStart(2, "0")}`;
 });
 
-// 音频对象（可替换为你自己的音频文件路径）
-const audio = new Audio(AudioPath.value);
+// 检查通知权限
+const checkNotificationPermission = async () => {
+  try {
+    notificationPermissionGranted.value = await isPermissionGranted();
+    if (!notificationPermissionGranted.value) {
+      const permission = await requestPermission();
+      notificationPermissionGranted.value = permission === "granted";
+    }
+  } catch (error) {
+    console.error("检查通知权限失败:", error);
+  }
+};
 
 // 检查自启动状态
 const checkAutoStartStatus = async () => {
@@ -78,8 +100,9 @@ const toggleAutoStart = async () => {
 };
 
 // 组件挂载时检查自启动状态
-onMounted(() => {
+onMounted(async () => {
   checkAutoStartStatus();
+  checkNotificationPermission();
 });
 
 const changeDefaultWorkTime = async () => {
@@ -187,6 +210,38 @@ const TimeOn = () => {
   clearInterval(timer);
   timer = null;
   audio.play();
+
+  // 发送系统通知
+  if (notificationPermissionGranted.value) {
+    try {
+      let notificationOptions;
+      if (!isPomodoro.value) {
+        notificationOptions = {
+          title: "番茄计时器",
+          body: "时间到！",
+          icon: notificationIcon.value,
+        };
+      } else if (!isResting.value) {
+        notificationOptions = {
+          title: "番茄计时器",
+          body: "番茄工作时间到！是时候休息一下了 🍅",
+          icon: notificationIcon.value,
+        };
+      } else {
+        notificationOptions = {
+          title: "番茄计时器",
+          body: "休息时间到！开始新的工作周期 💪",
+          icon: notificationIcon.value,
+        };
+      }
+
+      sendNotification(notificationOptions);
+      console.log("通知发送成功");
+    } catch (error) {
+      console.error("发送通知失败:", error);
+    }
+  }
+
   if (!isPomodoro.value) {
     ElMessageBox.alert("时间到", "提示", {
       confirmButtonText: "确定",
