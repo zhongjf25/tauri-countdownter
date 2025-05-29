@@ -81,16 +81,6 @@
           </el-button>
 
           <el-button
-            type="danger"
-            size="large"
-            @click="stopTimer"
-            class="control-btn"
-          >
-            <el-icon><Close /></el-icon>
-            停止
-          </el-button>
-
-          <el-button
             v-if="isPomodoro"
             type="success"
             size="large"
@@ -100,6 +90,17 @@
             <el-icon><VideoPlay /></el-icon>
             {{ isResting ? "直接开始工作" : "直接开始休息" }}
           </el-button>
+          
+          <el-button
+            type="danger"
+            size="large"
+            @click="stopTimer"
+            class="control-btn"
+          >
+            <el-icon><Close /></el-icon>
+            停止
+          </el-button>
+
         </div>
       </div>
     </div>

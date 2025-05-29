@@ -24,7 +24,7 @@ import { Minus, FullScreen, Close, Setting } from "@element-plus/icons-vue";
 const router = useRouter();
 const route = useRoute();
 
-const inputMinutes = ref(25);
+const inputMinutes = ref(30);
 const inputSeconds = ref(0);
 const timeLeft = ref(inputSeconds.value + inputMinutes.value * 60);
 const running = ref(false);
@@ -292,6 +292,8 @@ const pause = () => {
 
 const reset = () => {
   pause();
+  inputMinutes.value = 30;
+  inputSeconds.value = 0;
   timeLeft.value = inputSeconds.value + inputMinutes.value * 60;
   isPomodoro.value = false;
   isResting.value = false;
@@ -479,10 +481,10 @@ const setQuickTime = (minutes, seconds) => {
           </button>
           <button
             class="quick-btn"
-            @click="setQuickTime(25, 0)"
+            @click="setQuickTime(30, 0)"
             :disabled="running || isPomodoro"
           >
-            25分
+            30分
           </button>
         </div>
       </div>

@@ -50,11 +50,11 @@
             type="success"
             size="large"
             @click="continueNext"
-            class="continue-btn"
+            class="continue-cycle-btn"
             v-if="isPomodoro"
           >
             <el-icon><VideoPlay /></el-icon>
-            {{ autoCycling ? "继续循环" : isResting ? "开始工作" : "开始休息" }}
+            {{ isResting ? "开始工作" : "开始休息" }}
           </el-button>
 
           <el-button
@@ -65,8 +65,18 @@
             v-if="isPomodoro && autoCycling"
           >
             <el-icon><Close /></el-icon>
-            停止循环
+            退出
           </el-button>
+          <el-button
+            type="warning"
+            size="large"
+            class = "continue-btn"
+            @click="continueCurrent"
+            v-if="isPomodoro && autoCycling"
+          >
+            <el-icon><Refresh /></el-icon>
+            {{ isResting ? "继续休息" : "继续工作" }}
+          </el-button>          
         </div>
       </div>
     </div>
@@ -85,6 +95,7 @@ import {
   Minus,
   FullScreen,
   Close,
+  Refresh,
 } from "@element-plus/icons-vue";
 
 const router = useRouter();
@@ -174,6 +185,33 @@ const continueNext = () => {
     },
   });
 };
+
+
+const continueCurrent = () => {
+  // 停止音乐
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+
+  // 根据当前状态决定下一步
+  const nextIsResting = isResting;
+  const wasWorking = !isResting; // 记录当前周期是否是工作时间
+
+  // 返回主页面并传递状态，让主页面自动开始下一个周期
+  router.push({
+    path: "/",
+    query: {
+      autoStart: "true",
+      isPomodoro: "true",
+      isResting: nextIsResting.toString(),
+      autoCycling: autoCycling.toString(),
+      pomodoroCount: pomodoroCount.toString(),
+      fromTimeUp: "true",
+      wasWorking: wasWorking.toString(),
+    },
+  });
+}
 
 const stopCycleAndReturn = () => {
   // 停止音乐
