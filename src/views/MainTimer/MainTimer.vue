@@ -24,6 +24,7 @@ import { Minus, FullScreen, Close, Setting } from "@element-plus/icons-vue";
 const router = useRouter();
 const route = useRoute();
 
+const inputHours = ref(0);
 const inputMinutes = ref(30);
 const inputSeconds = ref(0);
 const timeLeft = ref(inputSeconds.value + inputMinutes.value * 60);
@@ -176,8 +177,8 @@ const changeDefaultWorkTime = async () => {
         inputType: "number",
         inputValidator: (value) => {
           const num = parseInt(value);
-          if (isNaN(num) || num <= 0 || num > 180) {
-            return "请输入1-180之间的数字";
+          if (isNaN(num) || num <= 0 || num > 1440) {
+            return "请输入1-1440之间的数字";
           }
           return true;
         },
@@ -275,6 +276,7 @@ const start = () => {
   router.push({
     path: "/countdown",
     query: {
+      hours : inputHours.value.toString(),
       minutes: inputMinutes.value.toString(),
       seconds: inputSeconds.value.toString(),
       isPomodoro: "false",
@@ -431,7 +433,8 @@ const setQuickTime = (minutes, seconds) => {
       <div class="time-section">
         <div class="time-display">
           <div class="time-value">
-            {{ String(inputMinutes).padStart(2, "0") }}:{{
+            {{ inputHours? String(inputHours).padStart(2, "0")+":" : "" }}{{ 
+              String(inputMinutes).padStart(2, "0") }}:{{
               String(inputSeconds).padStart(2, "0")
             }}
           </div>
@@ -440,11 +443,22 @@ const setQuickTime = (minutes, seconds) => {
         <!-- 简约时间调节 -->
         <div class="time-controls">
           <div class="control-row">
+            <span class="control-label">时</span>
+            <el-slider
+              v-model="inputHours"
+              :min="0"
+              :max="23"
+              :disabled="running || isPomodoro"
+              :show-tooltip="true"
+              class="time-slider"
+            />
+          </div>
+          <div class="control-row">
             <span class="control-label">分</span>
             <el-slider
               v-model="inputMinutes"
               :min="0"
-              :max="60"
+              :max="59"
               :disabled="running || isPomodoro"
               :show-tooltip="true"
               class="time-slider"
@@ -464,7 +478,7 @@ const setQuickTime = (minutes, seconds) => {
         </div>
 
         <!-- 快速设置按钮 -->
-        <div class="quick-buttons">
+        <!-- <div class="quick-buttons">
           <button
             class="quick-btn"
             @click="setQuickTime(1, 0)"
@@ -486,7 +500,7 @@ const setQuickTime = (minutes, seconds) => {
           >
             30分
           </button>
-        </div>
+        </div> -->
       </div>
 
       <div class="row" style="margin-bottom: 0.8em">

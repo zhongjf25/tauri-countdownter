@@ -129,6 +129,7 @@ const route = useRoute();
 const appWindow = Window.getCurrent();
 
 // 从路由参数获取初始数据
+const initialHours = ref(parseInt(route.query.hours) || 0);
 const initialMinutes = ref(parseInt(route.query.minutes) || 0);
 const initialSeconds = ref(parseInt(route.query.seconds) || 0);
 const isPomodoro = ref(route.query.isPomodoro === "true");
@@ -157,7 +158,7 @@ const loadPomodoroSettings = () => {
 };
 
 // 计时器状态
-const timeLeft = ref(initialMinutes.value * 60 + initialSeconds.value);
+const timeLeft = ref(initialHours.value*3600 + initialMinutes.value*60 + initialSeconds.value);
 const totalTime = ref(timeLeft.value);
 const running = ref(true);
 const notificationPermissionGranted = ref(false);
@@ -166,11 +167,13 @@ let timer = null;
 
 // 计算显示时间
 const displayTime = computed(() => {
-  const min = Math.floor(timeLeft.value / 60);
+  const hour = Math.floor(timeLeft.value / 3600);
+  const min = Math.floor((timeLeft.value % 3600) / 60);
   const sec = timeLeft.value % 60;
-  return `${min}:${sec.toString().padStart(2, "0")}`;
+  if (hour > 0) return `${hour}:${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
+  else return `${min}:${sec.toString().padStart(2, "0")}`;
 });
-
+ 
 // 获取计时器标题
 const getTimerTitle = () => {
   if (!isPomodoro.value) return "倒计时";
