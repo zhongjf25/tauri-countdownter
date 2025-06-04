@@ -19,7 +19,13 @@ import {
   requestPermission,
 } from "@tauri-apps/plugin-notification";
 import "element-plus/dist/index.css";
-import { Minus, FullScreen, Close, Setting } from "@element-plus/icons-vue";
+import {
+  Minus,
+  FullScreen,
+  Close,
+  Setting,
+  DocumentCopy,
+} from "@element-plus/icons-vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -276,7 +282,7 @@ const start = () => {
   router.push({
     path: "/countdown",
     query: {
-      hours : inputHours.value.toString(),
+      hours: inputHours.value.toString(),
       minutes: inputMinutes.value.toString(),
       seconds: inputSeconds.value.toString(),
       isPomodoro: "false",
@@ -372,6 +378,10 @@ const closeWindow = async () => {
   await appWindow?.hide();
 };
 
+const goToHistory = () => {
+  router.push("/history");
+};
+
 // 快速设置时间
 const setQuickTime = (minutes, seconds) => {
   if (running.value || isPomodoro.value) return;
@@ -394,10 +404,10 @@ const setQuickTime = (minutes, seconds) => {
           <template #dropdown>
             <ElDropdownMenu slot="dropdown">
               <ElDropdownItem @click="changeDefaultWorkTime"
-                >工作时间：{{ workTime/60 }} min</ElDropdownItem
+                >工作时间：{{ workTime / 60 }} min</ElDropdownItem
               >
               <ElDropdownItem @click="changeDefaultRestTime"
-                >休息时间：{{ restTime/60 }} min</ElDropdownItem
+                >休息时间：{{ restTime / 60 }} min</ElDropdownItem
               >
               <ElDropdownItem @click="changeDefaultAudioPath"
                 >闹铃： {{ getAudioFileName(AudioPath) }}</ElDropdownItem
@@ -417,6 +427,9 @@ const setQuickTime = (minutes, seconds) => {
             </ElDropdownMenu>
           </template>
         </ElDropdown>
+        <button class="icon-btn" @click="goToHistory" title="记录">
+          <el-icon :size="20"><DocumentCopy /></el-icon>
+        </button>
         <button class="icon-btn" @click="minimizeWindow" title="最小化">
           <el-icon :size="20"><Minus /></el-icon>
         </button>
@@ -433,8 +446,8 @@ const setQuickTime = (minutes, seconds) => {
       <div class="time-section">
         <div class="time-display">
           <div class="time-value">
-            {{ inputHours? String(inputHours).padStart(2, "0")+":" : "" }}{{ 
-              String(inputMinutes).padStart(2, "0") }}:{{
+            {{ inputHours ? String(inputHours).padStart(2, "0") + ":" : ""
+            }}{{ String(inputMinutes).padStart(2, "0") }}:{{
               String(inputSeconds).padStart(2, "0")
             }}
           </div>
