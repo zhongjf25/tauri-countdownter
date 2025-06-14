@@ -129,9 +129,9 @@ const toggleAutoStart = async () => {
 };
 
 // 检查路由参数，处理自动开始
-const handleRouteParams = () => {
+const handleRouteParams = async () => {
   if (route.query.autoStart === "true" && route.query.isPomodoro === "true") {
-    loadSettings();
+    await loadSettings();
 
     isPomodoro.value = true;
     isResting.value = route.query.isResting === "true";
