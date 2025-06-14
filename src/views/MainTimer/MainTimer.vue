@@ -146,6 +146,13 @@ const handleRouteParams = () => {
       pomodoroCount.value = parseInt(route.query.pomodoroCount);
     }
 
+    // 恢复音频路径
+    if (route.query.audioPath) {
+      AudioPath.value = route.query.audioPath;
+      audio.src = AudioPath.value;
+      saveSettings();
+    }
+
     // 如果是从时间结束页面返回的自动循环
     if (route.query.fromTimeUp === "true") {
       // 如果刚完成了工作时间，增加番茄计数

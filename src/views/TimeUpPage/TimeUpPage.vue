@@ -182,6 +182,7 @@ const continueNext = () => {
       pomodoroCount: pomodoroCount.toString(),
       fromTimeUp: "true",
       wasWorking: wasWorking.toString(),
+      audioPath: audioPath,
     },
   });
 };
@@ -209,6 +210,7 @@ const continueCurrent = () => {
       pomodoroCount: pomodoroCount.toString(),
       fromTimeUp: "true",
       wasWorking: wasWorking.toString(),
+      audioPath: audioPath,
     },
   });
 }
