@@ -123,10 +123,12 @@ import {
   VideoPlay,
   Back,
 } from "@element-plus/icons-vue";
+import { usePomodoroStore } from "../../stores/pomodoroStore";
 
 const router = useRouter();
 const route = useRoute();
 const appWindow = Window.getCurrent();
+const pomodoroStore = usePomodoroStore();
 
 // 从路由参数获取初始数据
 const initialHours = ref(parseInt(route.query.hours) || 0);
@@ -306,6 +308,7 @@ const switchMode = () => {
       isResting: isResting.value.toString(),
       autoCycling: autoCycling.value.toString(),
       pomodoroCount: pomodoroCount.value.toString(),
+      audioPath: audioPath.value,
     },
   });
 };
